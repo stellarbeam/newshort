@@ -23,7 +23,7 @@ class SessionManager(object):
 
     def connect(self):
         if self._session is None:
-            details_file = open('client-details.json',)
+            details_file = open('client-details.json', "r")
             data = json.load(details_file)
             
             client_id = data["client-id"]
