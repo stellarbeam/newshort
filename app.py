@@ -1,6 +1,5 @@
 from flask import Flask
-
-from connect_database import get_db_session
+from session_manager import SessionManager
 
 app = Flask(__name__)
 db_session = None 
@@ -10,7 +9,7 @@ def print_version():
     row = db_session.execute("select release_version from system.local").one()
 
     if row:
-        print("Astra DB verion:",row[0])
+        print("Astra DB verion:",row["release_version"])
     else:
         print("An error occurred.")
 
@@ -20,6 +19,6 @@ def hello_world():
     return "<p>Hello, World!</p>"
 
 if __name__ == '__main__':
-    db_session = get_db_session()
+    db_session = SessionManager.get_instance().connect()
     print_version()
     app.run()
