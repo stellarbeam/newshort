@@ -13,21 +13,28 @@ def fetch_news(api_key:str, category:str):
         'x-rapidapi-key': api_key
     }
 
-    response = requests.request("GET", url, headers=headers, params=querystring)
+    api_response = requests.request("GET", url, headers=headers, params=querystring)
 
-    articles = response.json()["value"]
+    articles = api_response.json()["value"]
 
-    response_text = ""
+    result_articles = []
 
     for art in articles:
         art_url = art["url"]
+        art_title = art["name"]
+        art_date = art["datePublished"]
 
-        news_content = get_article_text(art_url)
+        art_content = get_article_text(art_url)
 
-        response_text += '<p>' + news_content + '</p> \n'
+        result_articles.append({
+            "title": art_title,
+            "content": art_content,
+            "category": category,
+            "date": art_date
+        })
 
 
-    return response_text
+    return result_articles
 
 def get_article_text(url:str):
 

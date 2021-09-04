@@ -1,4 +1,5 @@
 from flask import Flask, request
+from flask.json import jsonify
 from session_manager import SessionManager
 import json
 from news_api import fetch_news
@@ -44,9 +45,9 @@ def get_news():
 
     if category in categories:
         response = fetch_news(news_api_key, category)
+        return jsonify(response)
     else:
-        response = "Whoops! Bad request"
-    return response
+        return "Bad request", 400
 
 if __name__ == '__main__':
     db_session = SessionManager.get_instance().connect()
