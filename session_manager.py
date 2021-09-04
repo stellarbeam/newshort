@@ -36,7 +36,7 @@ class SessionManager(object):
             }
 
             cluster = Cluster(cloud=astra_config, auth_provider=PlainTextAuthProvider(client_id, client_secret))
-            self._session = cluster.connect()
+            self._session = cluster.connect('newshorts')
 
             self._session.row_factory = dict_factory
 
