@@ -1,5 +1,8 @@
 import requests
+from threading import Thread
 from bs4 import BeautifulSoup
+import concurrent.futures 
+from time import sleep
 
 def fetch_news(api_key:str, category:str):
 
@@ -15,7 +18,11 @@ def fetch_news(api_key:str, category:str):
 
     api_response = requests.request("GET", url, headers=headers, params=querystring)
 
-    articles = api_response.json()["value"]
+    try:
+        articles = api_response.json()["value"]
+    except:
+        print("Error finding articles for category:", category)
+        return []
 
     result_articles = []
 
@@ -35,6 +42,23 @@ def fetch_news(api_key:str, category:str):
 
 
     return result_articles
+
+def fetch_all_news(api_key:str, categories:list):
+    all_articles = []
+
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = []
+        for category in categories:
+            sleep(0.5) # bing doesn't allow more than 3 requests/sec
+            futures.append( executor.submit(fetch_news, api_key, category) )
+        return_values = [future.result() for future in futures]
+        
+    for value in return_values:
+        all_articles.extend(value)
+        
+    return all_articles
+
 
 def get_article_text(url:str):
 
