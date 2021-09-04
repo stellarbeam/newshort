@@ -49,7 +49,7 @@ def get_news():
     if category in categories:
         list_of_response = fetch_news(news_api_key, category)
         for response in list_of_response:
-            response.content = generate_summary(response.content, 2)
+            response["content"] = generate_summary(response["content"], 4)
         return jsonify(list_of_response)
     else:
         return "Bad request", 400
