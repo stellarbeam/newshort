@@ -2,7 +2,10 @@ from flask import Flask, request
 from flask.json import jsonify
 from session_manager import SessionManager
 import json
+import atexit
 from news_api import fetch_news
+from summarizer import generate_summary
+from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
 db_session = None 
@@ -44,13 +47,21 @@ def get_news():
     ]
 
     if category in categories:
-        response = fetch_news(news_api_key, category)
-        return jsonify(response)
+        list_of_response = fetch_news(news_api_key, category)
+        for response in list_of_response:
+            response["content"] = generate_summary(response["content"], 4)
+        return jsonify(list_of_response)
     else:
         return "Bad request", 400
 
 if __name__ == '__main__':
     db_session = SessionManager.get_instance().connect()
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(func=get_news, trigger="interval", seconds=60*60)
+    scheduler.start()
+
+    # Shut down the scheduler when exiting the app
     init_news_api()
     print_version()
     app.run()
+    atexit.register(lambda: scheduler.shutdown())
