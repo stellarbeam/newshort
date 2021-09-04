@@ -1,6 +1,5 @@
 from flask import Flask, request
 from session_manager import SessionManager
-import requests as http
 import json
 from news_api import fetch_news
 
@@ -30,11 +29,24 @@ def hello_world():
 
 @app.route("/news")
 def get_news():
-    # query = request.args["q"]
+    category = request.args["cat"]
 
-    jsondata = fetch_news(news_api_key, ["business","sports"])
+    categories = [
+        "Business",
+        "Entertainment",
+        "India",
+        "LifeStyle",
+        "Politics",
+        "ScienceAndTechnology",
+        "Sports",
+        "World" 
+    ]
 
-    return jsondata
+    if category in categories:
+        response = fetch_news(news_api_key, category)
+    else:
+        response = "Whoops! Bad request"
+    return response
 
 if __name__ == '__main__':
     db_session = SessionManager.get_instance().connect()
