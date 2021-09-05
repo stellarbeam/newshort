@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "564400848287",
+    "project_id": "newshort-58ecc",
+    "storage_bucket": "newshort-58ecc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:564400848287:android:b844bff2a6421680da51aa",
+        "android_client_info": {
+          "package_name": "com.newsshort"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "564400848287-vnjh8spinebomnfcvbovaempjs4or5p2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzM-ySdFstAER16VCJlEChbPljAyo3d7g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "564400848287-vnjh8spinebomnfcvbovaempjs4or5p2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
