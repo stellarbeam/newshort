@@ -6,6 +6,7 @@ import atexit
 from news_api import fetch_news
 from summarizer import generate_summary
 from apscheduler.schedulers.background import BackgroundScheduler
+import datetime
 
 app = Flask(__name__)
 db_session = None 
@@ -49,12 +50,29 @@ def get_news():
     
 
     if category in all_categories:
-        list_of_response = fetch_news(news_api_key, category)
-        for response in list_of_response:
-            response["content"] = generate_summary(response["content"], 4)
+        # list_of_response = fetch_news(news_api_key, category)
+        # for response in list_of_response:
+        #     response["content"] = generate_summary(response["content"], 4)
+        list_of_response = db_session.execute("SELECT * FROM articles where cateory = "+ category)
         return jsonify(list_of_response)
     else:
         return "Bad request", 400
+
+def add_news():
+    for category in all_categories:
+        list_of_response = fetch_news(news_api_key, category)
+        for response in list_of_response:
+            response["content"] = generate_summary(response["content"], 4)
+            query = f"INSERT INTO newshorts.articles ( url, title, content, published_date, category ) VALUES ( "+response["url"]+ ", "+response["title"]+ ","+response["content"]+ ","+response["date"]+ ","+response["category"]+ " )"
+            res = db_session.execute(query)
+
+
+def delete_news():
+    yourdate = datetime.datetime.now()
+    # requireddate = ""+ yourdate.year + "-"+ yourdate.month + "-"+yourdate.day + " "+yourdate.hour+":"+yourdate.minute+":"+yourdate.second
+    query = f"DELETE FROM newshorts.articles WHERE DATEDIFF(hour, published_date,"+yourdate+") > 120"
+    
+    res = db_session.execute(query)
 
 @app.route("/get_prefs")
 def get_prefs():
@@ -93,7 +111,8 @@ def set_prefs():
 
 db_session = SessionManager.get_instance().connect()
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=get_news, trigger="interval", seconds=60*60)
+scheduler.add_job(func=add_news, trigger="interval", minutes=60)
+scheduler.add_job(func=delete_news, trigger="interval", minutes=47)
 scheduler.start()
 
 init_news_api()
