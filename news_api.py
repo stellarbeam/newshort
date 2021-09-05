@@ -34,6 +34,7 @@ def fetch_news(api_key:str, category:str):
         art_content = get_article_text(art_url)
 
         result_articles.append({
+            "url": art_url,
             "title": art_title,
             "content": art_content,
             "category": category,
